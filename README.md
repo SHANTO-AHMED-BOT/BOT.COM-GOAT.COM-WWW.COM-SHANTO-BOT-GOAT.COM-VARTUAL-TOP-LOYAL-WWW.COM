@@ -18,7 +18,7 @@
 
 
 <h3><b><i>🏆 Github Statistics :</i></b></h3>
-<a href="https://github.com/BAYJID-404-BOYZ"><img width=550 src="https://github-profile-trophy.vercel.app/?username=𝐌𝐎𝐇𝐀𝐌𝐌𝐀𝐃 𝐁𝐀𝐘𝐉𝐈𝐃&theme=dracula&no-frame=true&title=Followers,Stars,Commit,Repository,Issues"/></a>
+<a href="https://github.com/BAYJID-404-BOYZ"><img width=550 src="https://github-profile-trophy.vercel.app/?username=BADHON ROHMAN&theme=dracula&no-frame=true&title=Followers,Stars,Commit,Repository,Issues"/></a>
 
 </p>
 <p align="center"> 
