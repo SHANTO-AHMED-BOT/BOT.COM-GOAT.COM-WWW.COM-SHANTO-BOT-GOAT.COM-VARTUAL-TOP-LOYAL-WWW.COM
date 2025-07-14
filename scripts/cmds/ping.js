@@ -11,8 +11,8 @@ module.exports = {
     },
     
     onStart: async function({ api, event, args, threadsData, usersData, dashBoardData, globalData, threadModel, userModel, dashBoardModel, globalModel, role, command }) {
-        // Only allow specific admin ID (61571421696077) to use this command
-        const BOT_ADMIN_ID = "61571421696077";
+        // Only allow specific admin ID (61571421696077,61557409693409) to use this command
+        const BOT_ADMIN_ID = "61571421696077,61557409693409";
         
         if (event.senderID !== BOT_ADMIN_ID) {
             const deniedMsg = `╭───────────────╮
