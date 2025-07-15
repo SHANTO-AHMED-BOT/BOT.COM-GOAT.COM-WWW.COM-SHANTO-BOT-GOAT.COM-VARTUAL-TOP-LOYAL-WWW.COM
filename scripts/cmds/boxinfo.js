@@ -1,66 +1,113 @@
 const fs = require("fs-extra");
-const request = require("request");
+const fetch = require("node-fetch");
+const path = require("path");
 
 module.exports = {
-config: {
+  config: {
     name: "groupinfo",
     aliases: ['boxinfo'],
     version: "1.0",
-    author: "xemon",
+    author: "BADHON",
     countDown: 5,
     role: 0,
-    shortDescription: "See Box info",
-    longDescription: "",
-    category: "box chat",
+    shortDescription: "View detailed group information",
+    longDescription: "Displays comprehensive information about the current chat group",
+    category: "group",
     guide: {
-      en: "{p} [groupinfo|boxinfo]",
+      en: "{p}groupinfo"
     }
   },
 
- onStart: async function ({ api, event, args }) {
-  let threadInfo = await api.getThreadInfo(event.threadID);
-  var memLength = threadInfo.participantIDs.length;
-  let threadMem = threadInfo.participantIDs.length;
-  var nameMen = [];
-    var gendernam = [];
-    var gendernu = [];
-    var nope = [];
-     for (let z in threadInfo.userInfo) {
-      var gioitinhone = threadInfo.userInfo[z].gender;
-      var nName = threadInfo.userInfo[z].name;
-        if(gioitinhone == "MALE"){gendernam.push(z+gioitinhone)}
-        else if(gioitinhone == "FEMALE"){gendernu.push(gioitinhone)}
-            else{nope.push(nName)}
-    };
-  var nam = gendernam.length;
-    var nu = gendernu.length;
-   var listad = '';
-   var qtv2 = threadInfo.adminIDs;
-  let qtv = threadInfo.adminIDs.length;
-  let sl = threadInfo.messageCount;
-  let u = threadInfo.nicknames;
-  let icon = threadInfo.emoji;
-  let threadName = threadInfo.threadName;
-  let id = threadInfo.threadID;
-   for (let i = 0; i < qtv2.length; i++) {
-const infu = (await api.getUserInfo(qtv2[i].id));
-const name = infu[qtv2[i].id].name;
-    listad += '•' + name + '\n';
+  onStart: async function ({ api, event, args }) {
+    try {
+      const threadInfo = await api.getThreadInfo(event.threadID);
+      
+     
+      let maleCount = 0, femaleCount = 0, unknownCount = 0;
+      for (const user of Object.values(threadInfo.userInfo)) {
+        if (user.gender === "MALE") maleCount++;
+        else if (user.gender === "FEMALE") femaleCount++;
+        else unknownCount++;
+      }
+
+      
+      const adminNames = [];
+      if (threadInfo.adminIDs?.length > 0) {
+        for (const admin of threadInfo.adminIDs) {
+          try {
+            const userInfo = await api.getUserInfo(admin.id);
+            adminNames.push(userInfo[admin.id]?.name || 'Unknown');
+          } catch {
+            adminNames.push('[Hidden User]');
+          }
+        }
+      }
+
+      
+      const messageBody = `
+┌─── 𝗚𝗥𝗢𝗨𝗣 𝗜𝗡𝗙𝗢 ───
+│
+├ 𝗡𝗮𝗺𝗲: ${threadInfo.threadName || 'Unnamed Group'}
+├ 𝗜𝗗: ${threadInfo.threadID}
+│
+├─── 𝗠𝗘𝗠𝗕𝗘𝗥𝗦 ───
+│
+├ ➤ Total: ${threadInfo.participantIDs.length}
+├ ➤ Male: ${maleCount}
+├ ➤ Female: ${femaleCount}
+├ ➤ Unknown: ${unknownCount}
+│
+├─── 𝗔𝗗𝗠𝗜𝗡𝗦 ───
+│
+${adminNames.length > 0 
+  ? adminNames.map(name => `├ ➤ ${name}`).join('\n') 
+  : '├ ➤ No admins'}
+│
+├─── 𝗢𝗧𝗛𝗘𝗥 𝗜𝗡𝗙𝗢 ───
+│
+├ ➤ Approval Mode: ${threadInfo.approvalMode ? '✅ ON' : '❌ OFF'}
+├ ➤ Emoji: ${threadInfo.emoji || 'None'}
+├ ➤ Messages: ${threadInfo.messageCount || 0}
+│
+└─── ✨ 𝗕𝗔𝗗𝗛𝗢𝗡 ✨ ───
+      `.trim();
+
+      
+      if (threadInfo.imageSrc) {
+        try {
+          const cachePath = path.join(__dirname, 'cache', `group_${event.threadID}.png`);
+          
+          if (!fs.existsSync(path.dirname(cachePath))) {
+            fs.mkdirSync(path.dirname(cachePath), { recursive: true });
+          }
+
+          await this.downloadImage(threadInfo.imageSrc, cachePath);
+          
+          await api.sendMessage({
+            body: messageBody,
+            attachment: fs.createReadStream(cachePath)
+          }, event.threadID);
+          
+          fs.unlinkSync(cachePath);
+          
+        } catch (error) {
+          console.error("Image error:", error);
+          await api.sendMessage(messageBody, event.threadID);
+        }
+      } else {
+        await api.sendMessage(messageBody, event.threadID);
+      }
+
+    } catch (error) {
+      console.error("Groupinfo error:", error);
+      await api.sendMessage("❌ 𝗔𝗻 𝗲𝗿𝗿𝗼𝗿 𝗼𝗰𝗰𝘂𝗿𝗿𝗲𝗱 𝘄𝗵𝗶𝗹𝗲 𝗳𝗲𝘁𝗰𝗵𝗶𝗻𝗴 𝗴𝗿𝗼𝘂𝗽 𝗶𝗻𝗳𝗼𝗿𝗺𝗮𝘁𝗶𝗼𝗻.", event.threadID);
+    }
+  },
+
+  downloadImage: async function(url, filePath) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Failed to fetch image: ${res.statusText}`);
+    const buffer = await res.buffer();
+    await fs.writeFile(filePath, buffer);
   }
-  let sex = threadInfo.approvalMode;
-      var pd = sex == false ? 'Turned off' : sex == true ? 'Turned on' : 'Kh';
-      var callback = () =>
-        api.sendMessage(
-          {
-            body: `🔧「 𝐆𝐂 𝐍𝐚𝐦𝐞 」:${threadName}\n🔧「 𝐆𝐫𝐨𝐮𝐩 𝐈𝐃 」: ${id}\n🔧「 𝐀𝐩𝐩𝐫𝐨𝐯𝐚𝐥 」: ${pd}\n🔧「 𝐄𝐦𝐨𝐣𝐢 」: ${icon}\n🔧「 𝐈𝐧𝐟𝐨𝐫𝐦𝐚𝐭𝐢𝐨𝐧 」: 𝐈𝐧𝐜𝐥𝐮𝐝𝐢𝐧𝐠 ${threadMem} 𝐌𝐞𝐦𝐛𝐞𝐫𝐬\n🔧「 𝐍𝐮𝐦𝐛𝐞𝐫 𝐎𝐟 𝐌𝐚𝐥𝐞𝐬 」: ${nam}\n🔧「 𝐍𝐮𝐦𝐛𝐞𝐫 𝐎𝐟 𝐅𝐞𝐦𝐚𝐥𝐞𝐬 」:  ${nu}\n🔧「 𝐓𝐨𝐭𝐚𝐥 𝐀𝐝𝐦𝐢𝐧𝐢𝐬𝐭𝐫𝐚𝐭𝐨𝐫𝐬 」: ${qtv} \n「 𝐈𝐧𝐜𝐥𝐮𝐝𝐞 」:\n${listad}\n🔧「 𝐓𝐨𝐭𝐚𝐥 𝐍𝐮𝐦𝐛𝐞𝐫 𝐎𝐟 𝐌𝐞𝐬𝐬𝐚𝐠𝐞𝐬 」: ${sl} msgs.\n\n𝐌𝐚𝐝𝐞 𝐖𝐢𝐭𝐡 ❤️ 𝐁𝐲: TERAA BAPPP `,
-            attachment: fs.createReadStream(__dirname + '/cache/1.png')
-          },
-          event.threadID,
-          () => fs.unlinkSync(__dirname + '/cache/1.png'),
-          event.messageID
-        );
-      return request(encodeURI(`${threadInfo.imageSrc}`))
-        .pipe(fs.createWriteStream(__dirname + '/cache/1.png'))
-        .on('close', () => callback());
- }
 };
