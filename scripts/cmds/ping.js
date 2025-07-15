@@ -3,18 +3,17 @@ const { performance } = require('perf_hooks');
 module.exports = {
     config: {
         name: "ping",
-        version: "1.1",
+        version: "1.9",
         author: "BADHON",
         category: "SYSTEM",
         permission: "ADMIN ONLY",
-        description: "Checks the bot's ping and response speed with visual design"
+        description: "Checks bot's ping with style and attitude"
     },
-    
-    onStart: async function({ api, event, args, threadsData, usersData, dashBoardData, globalData, threadModel, userModel, dashBoardModel, globalModel, role, command }) {
-        // Only allow specific admin ID (61571421696077,61557409693409) to use this command
-        const BOT_ADMIN_ID = "61571421696077","61557409693409";
+
+    onStart: async function({ api, event }) {
+        const BOT_ADMIN_IDS = ["61571421696077", "61557409693409"];
         
-        if (event.senderID !== BOT_ADMIN_ID) {
+        if (!BOT_ADMIN_IDS.includes(event.senderID.toString())) {
             const deniedMsg = `╭───────────────╮
 │  ⚠️ 𝗪𝗔𝗥𝗡𝗜𝗡𝗚  ⚠️  │
 ╰───────────────╯
@@ -29,82 +28,135 @@ module.exports = {
         }
 
         try {
+            // Professional loading animation
+            const createProgressBar = (percent, length = 10) => {
+                const filled = Math.round(percent / 100 * length);
+                return '▰'.repeat(filled) + '▱'.repeat(length - filled);
+            };
+
+            let loadingMessage;
+            let percent = 0;
+            
+            loadingMessage = await api.sendMessage(
+                `╭───────────────────────╮\n│  🚀 Starting MELISSA Test...  │\n╰───────────────────────╯\n\n${createProgressBar(0)} 0%`,
+                event.threadID
+            );
+
+            const loadingInterval = setInterval(async () => {
+                percent += 5;
+                if (percent > 100) {
+                    clearInterval(loadingInterval);
+                    return;
+                }
+                
+                const progressBar = createProgressBar(percent);
+                const loadingTexts = [
+                    "⏱️ Measuring her reflexes...",
+                    "📈 Calculating her speed...",
+                    "💃 Almost done dancing..."
+                ];
+                const currentText = loadingTexts[Math.min(2, Math.floor(percent / 33))];
+                
+                try {
+                    await api.editMessage(
+                        `╭───────────────────────╮\n│  ${currentText}  │\n╰───────────────────────╯\n\n${progressBar} ${percent}%`,
+                        loadingMessage.messageID
+                    );
+                } catch (e) {
+                    clearInterval(loadingInterval);
+                }
+            }, 100);
+
+            // Actual ping measurement
+            this.cleanMemory();
             const startTime = performance.now();
-            
-            // Send initial message with design
-            const checkingMsg = `╭───────────────────╮
-│  📡 𝗖𝗛𝗘𝗖𝗞𝗜𝗡𝗚...  │
-╰───────────────────╯
-│
-│ ⏳ Measuring Melissa's 
-│   response speed...
-│
-╰──────────────────────•`;
-            const pingMessage = await api.sendMessage(checkingMsg, event.threadID);
-            
+            await new Promise(resolve => setTimeout(resolve, 1800));
             const endTime = performance.now();
             const ping = Math.floor(endTime - startTime);
             
-            // Delete the initial checking message
-            api.unsendMessage(pingMessage.messageID);
-            
-            // Determine ping status with beautiful design
+            // Finalize loading
+            clearInterval(loadingInterval);
+            try {
+                await api.editMessage(
+                    `╭───────────────────────╮\n│  ✅ MELISSA Test Complete!  │\n╰───────────────────────╯\n\n▰▰▰▰▰▰▰▰▰▰ 100%`,
+                    loadingMessage.messageID
+                );
+            } catch (e) {}
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Ping result message with personality
             let responseMessage;
-            if (ping < 300) {
-                responseMessage = `╭───────────────────╮
-│  🚀 𝗣𝗘𝗥𝗙𝗢𝗥𝗠𝗔𝗡𝗖𝗘  │
-╰───────────────────╯
+            if (ping < 150) {
+                responseMessage = `╭───────────────────────╮
+│  🥵 𝗠𝗘𝗟𝗜𝗦𝗦𝗔 𝗜𝗦 𝗦𝗠𝗢𝗢𝗧𝗛  │
+╰───────────────────────╯
 │
-│ ✅ Ping: ${ping}ms
+│ ⏱️ Response Time: ${ping}ms
 │
-│ 💫 Bot is very smooth 
-│    like butter 😗🫶
+│ ✨ MELISSA IS SMOOTH LIKE BUTTER
 │
-│ 🌟 Excellent performance!
+│ 🌟 She's dancing flawlessly!
 │
-╰──────────────────────•`;
-            } else if (ping < 600) {
-                responseMessage = `╭───────────────────╮
-│  ⚠️ 𝗡𝗢𝗧𝗜𝗖𝗘  ⚠️  │
-╰───────────────────╯
+╰──────────────────────────•`;
+            } else if (ping < 300) {
+                responseMessage = `╭───────────────────────╮
+│  ⚡ 𝗠𝗘𝗟𝗜𝗦𝗦𝗔 𝗜𝗦 𝗢𝗞  │
+╰───────────────────────╯
 │
-│ 🕒 Ping: ${ping}ms
+│ ⏱️ Response Time: ${ping}ms
 │
-│ ⚡ Response is a bit 
-│   slow but manageable
+│ 🏃 She's moving decently
 │
-│ 🔧 Might need tuning
+│ ℹ️ Could use some caffeine maybe
 │
-╰──────────────────────•`;
+╰──────────────────────────•`;
+            } else if (ping < 500) {
+                responseMessage = `╭───────────────────────╮
+│  🐢 𝗠𝗘𝗟𝗜𝗦𝗦𝗔 𝗜𝗦 𝗧𝗜𝗥𝗘𝗗  │
+╰───────────────────────╯
+│
+│ ⏱️ Response Time: ${ping}ms
+│
+│ 😴 She's moving very slow
+│
+│ ☕ Maybe she needs some rest
+│
+╰──────────────────────────•`;
             } else {
-                responseMessage = `╭───────────────────╮
-│  🚨 𝗖𝗥𝗜𝗧𝗜𝗖𝗔𝗟  🚨  │
-╰───────────────────╯
+                responseMessage = `╭───────────────────────╮
+│  💀 𝗠𝗘𝗟𝗜𝗦𝗦𝗔 𝗜𝗦 𝗟𝗔𝗚𝗚𝗜𝗡𝗚  │
+╰───────────────────────╯
 │
-│ ❌ Ping: ${ping}ms
+│ ⏱️ Response Time: ${ping}ms
 │
-│ 🐢 Bot will lag badly!
+│ 💀 MELISSA IS LAGGING BADLY
 │
-│ 🔥 Immediate attention
-│    required!
+│ 🆘 SOMEONE HELP HER PLEASE!
 │
-╰──────────────────────•`;
+╰──────────────────────────•`;
             }
             
-            api.sendMessage(responseMessage, event.threadID);
-            
+            await api.sendMessage(responseMessage, event.threadID);
+            try {
+                await api.unsendMessage(loadingMessage.messageID);
+            } catch (e) {}
+
         } catch (error) {
             console.error("Ping command error:", error);
-            const errorMsg = `╭───────────────────╮
-│  ❌ 𝗘𝗥𝗥𝗢𝗥  ❌  │
-╰───────────────────╯
+            const errorMsg = `╭───────────────────────╮
+│  ❌ 𝗠𝗘𝗟𝗜𝗦𝗦𝗔 𝗖𝗥𝗔𝗦𝗛𝗘𝗗  │
+╰───────────────────────╯
 │
-│ 🔧 Failed to check ping
+│ 🔧 Error: ${error.message}
 │
-│ ⚠️ Please try again later
+│ ⚠️ She needs a reboot maybe?
 │
-╰──────────────────────•`;
+╰──────────────────────────•`;
             api.sendMessage(errorMsg, event.threadID);
         }
-    }
-};
+    },
+
+    cleanMemory: function() {
+        try {
+  
