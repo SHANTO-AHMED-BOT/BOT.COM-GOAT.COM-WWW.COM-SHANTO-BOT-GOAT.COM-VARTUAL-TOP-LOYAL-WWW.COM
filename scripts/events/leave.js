@@ -1,4 +1,4 @@
-const { getTime, drive } = global.utils;
+^event install leave.js const { getTime, drive } = global.utils;
 
 module.exports = {
     config: {
@@ -61,70 +61,88 @@ module.exports = {
         }
     },
 
-    onStart: async ({ threadsData, message, event, api, usersData, getLang }) => {
-        if (event.logMessageType !== "log:unsubscribe") return;
-        
-        const { threadID } = event;
-        const threadData = await threadsData.get(threadID);
-        if (!threadData.settings.sendLeaveMessage) return;
-        
-        const { leftParticipantFbId } = event.logMessageData;
-        if (leftParticipantFbId == api.getCurrentUserID()) return;
-        
-        const hours = getTime("HH");
-        const threadName = threadData.threadName;
-        const userName = await usersData.getName(leftParticipantFbId);
-        const isSelfLeave = leftParticipantFbId == event.author;
-        const leaveType = getLang(isSelfLeave ? "leaveType1" : "leaveType2");
+    onStart: async function(params) {
+        try {
+            const { threadsData, message, event, api, usersData, getLang } = params;
 
-        
-        let leaveMessage;
-        if (getLang("funnyMessages")) {
+            if (event.logMessageType !== "log:unsubscribe") return;
+
+            const threadID = event.threadID;
+            const threadData = await threadsData.get(threadID);
+            if (!threadData.settings || !threadData.settings.sendLeaveMessage) return;
+
+            const leftParticipantFbId = event.logMessageData.leftParticipantFbId;
+            if (leftParticipantFbId === api.getCurrentUserID()) return;
+
+            const hours = getTime("HH");
+            const threadName = threadData.threadName;
+            const userName = await usersData.getName(leftParticipantFbId);
+            const isSelfLeave = leftParticipantFbId === event.author;
+            const leaveType = getLang(isSelfLeave ? "leaveType1" : "leaveType2");
+
+            // Get message content
+            let leaveMessage;
             const funnyMessages = getLang("funnyMessages");
-            leaveMessage = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
-        } else {
-            leaveMessage = threadData.data.leaveMessage || getLang("defaultLeaveMessage");
-        }
 
-        
-        const formattedMessage = `
+            if (Array.isArray(funnyMessages)) {
+                leaveMessage = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+            } else {
+                leaveMessage = threadData.data.leaveMessage || getLang("defaultLeaveMessage");
+            }
+
+            // Ensure leaveMessage is a string
+            if (typeof leaveMessage !== "string") {
+                leaveMessage = getLang("defaultLeaveMessage");
+            }
+
+            // Get session time
+            let session;
+            if (hours <= 10) session = getLang("session1");
+            else if (hours <= 12) session = getLang("session2");
+            else if (hours <= 18) session = getLang("session3");
+            else session = getLang("session4");
+
+            // Format the message
+            const formattedMessage = `
 ━━━━━━━━━━━━━━━
   ✧ GROUP NOTIFICATION ✧
 ━━━━━━━━━━━━━━━
 
 ${leaveMessage
-    .replace(/\{userName\}|\{userNameTag\}/g, userName)
+    .replace(/\{userName\}/g, userName)
     .replace(/\{type\}/g, leaveType)
-    .replace(/\{threadName\}|\{boxName\}/g, threadName)
+    .replace(/\{threadName\}/g, threadName)
+    .replace(/\{boxName\}/g, threadName)
     .replace(/\{time\}/g, hours)
-    .replace(/\{session\}/g, 
-        hours <= 10 ? getLang("session1") :
-        hours <= 12 ? getLang("session2") :
-        hours <= 18 ? getLang("session3") : getLang("session4")
-    )}
+    .replace(/\{session\}/g, session)}
 
 ━━━━━━━━━━━━━━━
-⏰ Time: ${hours}:00 ${getLang(hours <= 12 ? "session2" : "session4")}
+⏰ Time: ${hours}:00 ${hours <= 12 ? getLang("session2") : getLang("session4")}
 ━━━━━━━━━━━━━━━
-        `;
+            `;
 
-        const form = {
-            body: formattedMessage,
-            mentions: [{
-                id: leftParticipantFbId,
-                tag: userName
-            }]
-        };
+            // Prepare message form
+            const form = {
+                body: formattedMessage,
+                mentions: [{
+                    id: leftParticipantFbId,
+                    tag: userName
+                }]
+            };
 
-        // Add attachment if available
-        if (threadData.data.leaveAttachment) {
-            const files = threadData.data.leaveAttachment;
-            const attachments = await Promise.all(
-                files.map(file => drive.getFile(file, "stream").catch(() => null))
-            );
-            form.attachment = attachments.filter(Boolean);
+            // Add attachments if available
+            if (threadData.data.leaveAttachment) {
+                const files = threadData.data.leaveAttachment;
+                const attachments = await Promise.all(
+                    files.map(file => drive.getFile(file, "stream").catch(() => null))
+                );
+                form.attachment = attachments.filter(attachment => attachment !== null);
+            }
+
+            // Send the message
+            await message.send(form);
+        } catch (err) {
+            console.error("Error in leave event handler:", err);
         }
-
-        await message.send(form);
     }
 };
