@@ -1,35 +1,77 @@
-const axios = require('axios');
+const { GoatWrapper } = require("fca-liane-utils");
+const axios = require("axios");
 
 module.exports = {
   config: {
-    name: "image",
-    aliases:["img"],
-    author: "ChatGPT",
-    version: "4.0",
-    shortDescription: "Search for images using Unsplash API",
-    longDescription: "Search for high-quality images using Unsplash API and return a specified number of results.",
-    category: "utility",
+    name: "img",
+    version: "1.2",
+    author: "Badhon",
+    countDown: 5,
+    role: 0,
+    longDescription: {
+      vi: "",
+      en: "Generate multiple AI images from text.",
+    },
+    category: "AI-IMAGE",
     guide: {
       vi: "",
-      en: ""
-    }
+      en: "Example: {pn} cute girl | 4 (will generate 4 images)",
+    },
   },
 
-  onStart: async function({ args, message, getLang }) {
+  onStart: async function ({ api, args, message, event }) {
     try {
-      const query = args.join(' ');
-      const numResults = parseInt(args[0]) || 5; // Default to 5 if no number is provided
-      const url = `https://api.unsplash.com/search/photos?page=1&per_page=${numResults}&query=${query}&client_id=oWmBq0kLICkR_5Sp7m5xcLTAdkNtEcRG7zrd55ZX6oQ`;
+      const text = args.join(" ");
+      if (!text) {
+        return message.reply("⚠ Please provide a prompt.");
+      }
 
-      const { data } = await axios.get(url);
-      const results = data.results.map(result => result.urls.regular);
+      let prompt, quantity;
+      if (text.includes("|")) {
+        [prompt, quantity] = text.split("|").map(str => str.trim());
+        quantity = parseInt(quantity);
+        if (isNaN(quantity) || quantity < 1 || quantity > 10) {
+          return message.reply("⚠ Quantity must be a number between 1 and 10.");
+        }
+      } else {
+        prompt = text;
+        quantity = 4; // default quantity
+      }
 
-      const attachments = await Promise.all(results.map(url => global.utils.getStreamFromURL(url)));
+      api.setMessageReaction("👄", event.messageID, () => {}, true);
+      const waitingMessage = await message.reply(`😗 | HERE'S YOUR${quantity} image(s)...`);
 
-      return message.reply({body: `Here are the top ${numResults} high-quality image results for "${query}" from Unsplash:`, attachment: attachments});
+      const imageUrls = [];
+
+      const ratio = "1:1";
+
+      for (let i = 0; i < quantity; i++) {
+        const res = await axios.get(`https://www.ai4chat.co/api/image/generate`, {
+          params: {
+            prompt,
+            aspect_ratio:ratio
+
+          }
+        });
+
+        if (res.data?.image_link) {
+          imageUrls.push(res.data.image_link);
+        }
+      }
+
+      const imageStreams = await Promise.all(
+        imageUrls.map(url => global.utils.getStreamFromURL(url))
+      );
+
+      await message.reply({ attachment: imageStreams });
+
+      api.setMessageReaction("🥱", event.messageID, () => {}, true);
+      await api.unsendMessage(waitingMessage.messageID);
     } catch (error) {
-      console.error(error);
-      return message.reply("Sorry, I couldn't find any results.")
+      console.error("Image generation error:", error.message || error);
+      message.reply("❌ Failed to generate images.");
     }
-  }
-}
+  },
+};
+const wrapper = new GoatWrapper(module.exports);
+wrapper.applyNoPrefix({ allowPrefix: true });
