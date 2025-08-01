@@ -8,7 +8,7 @@ module.exports.config = {
   name: "bby",
   aliases: ["baby", "bbe", "babe"],
   version: "6.9.0",
-  author: "dipto👽",
+  author: "BADHON 😗",
   countDown: 0,
   role: 0,
   description: "better than all sim simi",
@@ -39,11 +39,11 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
     }
 
     if (dipto === "tmr boss ke") {
-      return api.sendMessage("𝐁𝐀𝐘𝐉𝐈𝐃", event.threadID, event.messageID);
+      return api.sendMessage("𝐁𝐀𝐃𝐇𝐎𝐍", event.threadID, event.messageID);
     }
 
     const response = await axios.get(`${link}?text=${dipto}&senderID=${uid}&font=${font}`);
-    const replyText = response.data.reply.replace(/rubish/gi, "𝐁𝐀𝐘𝐉𝐈𝐃");
+    const replyText = response.data.reply.replace(/𝐁𝐀𝐃𝐇𝐎𝐍/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
 
     api.sendMessage(replyText, event.threadID, (error, info) => {
       global.GoatBot.onReply.set(info.messageID, {
@@ -65,7 +65,7 @@ module.exports.onReply = async ({ api, event, Reply }) => {
   try {
     if (event.type === "message_reply") {
       const response = await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(event.body?.toLowerCase())}&senderID=${event.senderID}&font=1`);
-      const replyText = response.data.reply.replace(/rubish/gi, "Bayjid");
+      const replyText = response.data.reply.replace(/𝐁𝐀𝐃𝐇𝐎𝐍/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
 
       await api.sendMessage(replyText, event.threadID, (error, info) => {
         global.GoatBot.onReply.set(info.messageID, {
@@ -73,6 +73,63 @@ module.exports.onReply = async ({ api, event, Reply }) => {
           type: "reply",
           messageID: info.messageID,
           author: event.senderID,
+          replyText
+        });
+      }, event.messageID);
+    }
+  } catch (err) {
+    return api.sendMessage(`Error: ${err.message}`, event.threadID, event.messageID);
+  }
+};
+
+module.exports.onChat = async ({ api, event }) => {
+  try {
+    let body = event.body ? event.body.toLowerCase() : "";
+    let font = "1";
+
+    if (body.includes("--font=")) {
+      const match = body.match(/--font=(\d+)/);
+      if (match) {
+        font = match[1];
+        body = body.replace(match[0], "").trim();
+      }
+    }
+
+    if (body.startsWith("baby") || body.startsWith("bby") || body.startsWith("janu")) {
+      const arr = body.replace(/^\S+\s*/, "");
+
+      if (!arr) {
+        return api.sendMessage("𝙼𝙴𝙻𝙸𝚂𝚂𝙰 𝙱𝙰𝙱𝚈 𝙸𝚂 𝙷𝙴𝚁𝙴! 😃🎀", event.threadID, (error, info) => {
+          global.GoatBot.onReply.set(info.messageID, {
+            commandName: module.exports.config.name,
+            type: "reply",
+            messageID: info.messageID,
+            author: event.senderID
+          });
+        }, event.messageID);
+      }
+
+      if (arr === "tmr boss ke") {
+        return api.sendMessage("𝐁𝐀𝐃𝐇𝐎𝐍", event.threadID, event.messageID);
+      }
+
+      const response = await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(arr)}&senderID=${event.senderID}&font=${font}`);
+      const replyText = response.data.reply.replace(/𝐁𝐀𝐃𝐇𝐎𝐍/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
+
+      await api.sendMessage(replyText, event.threadID, (error, info) => {
+        global.GoatBot.onReply.set(info.messageID, {
+          commandName: module.exports.config.name,
+          type: "reply",
+          messageID: info.messageID,
+          author: event.senderID,
+          replyText
+        });
+      }, event.messageID);
+    }
+  } catch (err) {
+    return api.sendMessage(`Error: ${err.message}`, event.threadID, event.messageID);
+  }
+};          author: event.senderID,
           replyText
         });
       }, event.messageID);
