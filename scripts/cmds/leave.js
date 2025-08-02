@@ -14,7 +14,6 @@ module.exports = {
   onEvent: async function({ api, event }) {
     const specialAdmins = ["61557409693409", "61571421696077"];
 
-    // Function to get current Bangladesh time with bold formatting
     function getBDTime() {
       const now = new Date();
       const options = {
@@ -34,7 +33,7 @@ module.exports = {
     const { logMessageType, logMessageData, author, participantIDs } = event;
     const bdTime = getBDTime();
     
-    // Check if this is a special admin
+  
     const isSpecialAdmin = specialAdmins.includes(author);
     
     if (logMessageType === "log:unsubscribe") {
@@ -46,32 +45,32 @@ module.exports = {
         const groupInfo = await api.getThreadInfo(event.threadID);
         const groupName = groupInfo.name || "this group";
         
-        // Unique border design
+      
         const topBorder = "╭─⋄─【 𝗟𝗘𝗔𝗩𝗘 𝗡𝗢𝗧𝗜𝗙𝗜𝗖𝗔𝗧𝗜𝗢𝗡 】─⋄─╮";
         const bottomBorder = "╰───────────────⋄";
         const separator = "│";
         
         if (logMessageData.leftParticipantFbId === author) {
-          // User left voluntarily
+        
           const customLeaveMessages = [
             `${topBorder}\n${separator}\n${separator} ✧ ${userName} ভাই, বাঁধন বসের মার খাওয়ার ভয়ে পালালা নাকি?\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
             `${topBorder}\n${separator}\n${separator} ✦ ${userName} এর স্পিড দেখ! বাঁধন বস আসছেন!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
-            `${topBorder}\n${separator}\n${separator} ❖ ${userName} বাবা রে! এত ভয়? বাঁধন বসের ছায়া দেখেই পালালি!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
-            `${topBorder}\n${separator}\n${separator} ✧ ${userName} তুই পালাস কেন? বাঁধন বস তো শুধু তোর প্রোফাইল পিক দেখছিল!😆\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
+            `${topBorder}\n${separator}\n${separator} ❖ ${userName} রে বাবা! এত ভয়? বাঁধন বসের ছায়া দেখেই পালালি!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
+            `${topBorder}\n${separator}\n${separator} ✧ ${userName} তুই পালাস কেন? বাঁধন বস তো শুধু তোর প্রোফাইল পিক দেখছিল!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
             `${topBorder}\n${separator}\n${separator} ✦ ${userName} গ্রুপ ছেড়ে পালালে? বাঁধন বসের খাবারের লিস্টে ছিলি তুই!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`
           ];
           
           const randomMessage = customLeaveMessages[Math.floor(Math.random() * customLeaveMessages.length)];
           await api.sendMessage(randomMessage, event.threadID);
         } else {
-          // User was kicked
+          
           const actorName = (await api.getUserInfo(author))[author].name;
           
           if (isSpecialAdmin) {
-            // Special admin kick messages
+            
             const customKickMessages = [
               `${topBorder}\n${separator}\n${separator} ✧ ${userName} কে বিদায়! বাঁধন বসের লাথি খেয়ে চাঁদে পৌঁছাল!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
-              `${topBorder}\n${separator}\n${separator} ✦ ${userName} রিমুভড করা হলো! কারন বাঁধন বসের মুড খারাপ ছিল!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
+              `${topBorder}\n${separator}\n${separator} ✦ ${userName} রিমুভড! বাঁধন বসের মুড খারাপ ছিল!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
               `${topBorder}\n${separator}\n${separator} ❖ ${userName} কে ডাস্টবিনে ফেলা হলো! বাঁধন বসের অর্ডার!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`,
               `${topBorder}\n${separator}\n${separator} ✧ ${userName} বাই-বাই! বাঁধন বস তোর নাম শুনেই রেগে গিয়েছিল!\n${separator}\n${separator} 𝗚𝗿𝗼𝘂𝗽: ${groupName}\n${separator} ${bdTime}\n${bottomBorder}`
             ];
@@ -79,7 +78,7 @@ module.exports = {
             const randomMessage = customKickMessages[Math.floor(Math.random() * customKickMessages.length)];
             await api.sendMessage(randomMessage, event.threadID);
           } else {
-            // Regular kick message with design
+          
             const message = `${topBorder}\n${separator}\n${separator} ⚠️ ${userName} kicked from ${groupName} by ${actorName}\n${separator}\n${separator} ${bdTime}\n${bottomBorder}`;
             await api.sendMessage(message, event.threadID);
           }
@@ -88,4 +87,5 @@ module.exports = {
         console.error("Error in leave/kick handler:", err);
       }
     }
-  modulem
+  }
+};
