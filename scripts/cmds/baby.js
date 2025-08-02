@@ -43,7 +43,7 @@ module.exports.onStart = async ({ api, event, args, usersData }) => {
     }
 
     const response = await axios.get(`${link}?text=${dipto}&senderID=${uid}&font=${font}`);
-    const replyText = response.data.reply.replace(/𝐁𝐀𝐃𝐇𝐎𝐍/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
+    const replyText = response.data.reply.replace(/Badhon/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
 
     api.sendMessage(replyText, event.threadID, (error, info) => {
       global.GoatBot.onReply.set(info.messageID, {
@@ -65,7 +65,7 @@ module.exports.onReply = async ({ api, event, Reply }) => {
   try {
     if (event.type === "message_reply") {
       const response = await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(event.body?.toLowerCase())}&senderID=${event.senderID}&font=1`);
-      const replyText = response.data.reply.replace(/𝐁𝐀𝐃𝐇𝐎𝐍/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
+      const replyText = response.data.reply.replace(/Badhon/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
 
       await api.sendMessage(replyText, event.threadID, (error, info) => {
         global.GoatBot.onReply.set(info.messageID, {
@@ -99,7 +99,7 @@ module.exports.onChat = async ({ api, event }) => {
       const arr = body.replace(/^\S+\s*/, "");
 
       if (!arr) {
-        return api.sendMessage("𝙼𝙴𝙻𝙸𝚂𝚂𝙰 𝙱𝙰𝙱𝚈 𝙸𝚂 𝙷𝙴𝚁𝙴! 😃🎀", event.threadID, (error, info) => {
+        return api.sendMessage("𝙼𝙴𝙻𝙸𝚂𝚂𝙰 𝙱𝙰𝙱𝚈 𝙸𝚂 𝙷𝙴𝚁𝙴!😃🎀", event.threadID, (error, info) => {
           global.GoatBot.onReply.set(info.messageID, {
             commandName: module.exports.config.name,
             type: "reply",
@@ -114,7 +114,7 @@ module.exports.onChat = async ({ api, event }) => {
       }
 
       const response = await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(arr)}&senderID=${event.senderID}&font=${font}`);
-      const replyText = response.data.reply.replace(/𝐁𝐀𝐃𝐇𝐎𝐍/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
+      const replyText = response.data.reply.replace(/Badhon/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
 
       await api.sendMessage(replyText, event.threadID, (error, info) => {
         global.GoatBot.onReply.set(info.messageID, {
@@ -167,11 +167,11 @@ module.exports.onChat = async ({ api, event }) => {
       }
 
       if (arr === "tmr boss ke") {
-        return api.sendMessage("𝐁𝐀𝐘𝐉𝐈𝐃", event.threadID, event.messageID);
+        return api.sendMessage("𝐁𝐀𝐃𝐇𝐎𝐍", event.threadID, event.messageID);
       }
 
       const response = await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(arr)}&senderID=${event.senderID}&font=${font}`);
-      const replyText = response.data.reply.replace(/rubish/gi, "𝐁𝐀𝐘𝐉𝐈𝐃");
+      const replyText = response.data.reply.replace(/badhon/gi, "𝐁𝐀𝐃𝐇𝐎𝐍");
 
       await api.sendMessage(replyText, event.threadID, (error, info) => {
         global.GoatBot.onReply.set(info.messageID, {
