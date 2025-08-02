@@ -22,6 +22,7 @@
 		"eta": "^1.12.3",
 		"express": "^4.18.1",
 		"express-fileupload": "^1.4.0",
+		"request-promise": "^4.2.6",
 		"express-rate-limit": "^6.5.2",
 		"express-session": "^1.17.3",
 		"fca-liane-utils": "^1.4.0",
