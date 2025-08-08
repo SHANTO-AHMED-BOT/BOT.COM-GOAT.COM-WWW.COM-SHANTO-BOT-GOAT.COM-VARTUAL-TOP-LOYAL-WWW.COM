@@ -45,6 +45,9 @@ module.exports = {
       "https://files.catbox.moe/cfvlqh.mp4",
       "https://files.catbox.moe/vp2vw5.mp4",
       "https://files.catbox.moe/vaxzy3.mp4",
+      "https://files.catbox.moe/3cpc2q.mp4",
+      "https://files.catbox.moe/sbuef8.mp4",
+      "https://files.catbox.moe/dmacm0.mp4"
     ];
 
     const hotMessages = [
@@ -60,25 +63,6 @@ module.exports = {
       "😈 𝗬𝗢𝗨 𝗔𝗦𝗞𝗘𝗗 𝗙𝗢𝗥 𝗜𝗧, 𝗛𝗘𝗥𝗘'𝗦 𝗬𝗢𝗨𝗥 𝗦𝗘𝗫 𝗩𝗜𝗗𝗘𝗢! 𝗚𝗘𝗧 𝗪𝗘𝗧! 💋"
     ];
 
-    async function checkUrl(url) {
-      try {
-        const response = await axios.head(url, { timeout: 5000 });
-        return response.status === 200;
-      } catch (error) {
-        return false;
-      }
-    }
-
-    async function getWorkingVideo() {
-      const shuffled = [...videos].sort(() => 0.5 - Math.random());
-      for (const url of shuffled) {
-        if (await checkUrl(url)) {
-          return url;
-        }
-      }
-      throw new Error("No working video URLs available");
-    }
-
     const loadingMessage = "🔄 𝗛𝗘𝗥𝗘 𝗜𝗦 𝗕𝗔𝗗𝗛𝗢𝗡 𝗕𝗢𝗦𝗦 𝗣𝗥𝗘𝗠𝗜𝗨𝗠 𝗖𝗢𝗡𝗧𝗘𝗡𝗧 𝗥𝗘𝗔𝗗𝗬 𝗪𝗜𝗧𝗛 𝗧𝗜𝗦𝗦𝗨𝗘 𝗪𝗔𝗜𝗧 𝗨𝗣 𝗧𝗢 𝟱 𝗠𝗜𝗡𝗨𝗧𝗘 𝗕𝗔𝗗𝗛𝗢𝗡'𝗦 𝗣𝗢𝗢𝗞𝗜𝗘'𝗦 𝗖𝗢𝗡𝗧𝗘𝗡𝗧 𝗜𝗦 𝗟𝗢𝗔𝗗𝗜𝗡𝗚 😗😗🥵👻";
 
     try {
@@ -86,7 +70,8 @@ module.exports = {
       
       const loadingMsg = await message.reply(loadingMessage);
       
-      const videoUrl = await getWorkingVideo();
+
+      const videoUrl = videos[Math.floor(Math.random() * videos.length)];
       const randomMessage = hotMessages[Math.floor(Math.random() * hotMessages.length)];
 
       const response = await axios({
@@ -122,5 +107,44 @@ module.exports = {
 
     } catch (error) {
       console.error("Error:", error);
-      message.reply("😿 Oops! Something went wrong. Please try again later.");
-    }const
+
+      try {
+        const fallbackVideo = videos[Math.floor(Math.random() * videos.length)];
+        const response = await axios({
+          method: 'get',
+          url: fallbackVideo,
+          responseType: 'stream',
+          timeout: 10000
+        });
+
+        const tempFilePath = path.join(__dirname, `temp_${Date.now()}.mp4`);
+        const writer = fs.createWriteStream(tempFilePath);
+        
+        response.data.pipe(writer);
+
+        await new Promise((resolve, reject) => {
+          writer.on('finish', resolve);
+          writer.on('error', reject);
+        });
+
+        await message.unsend(loadingMsg.messageID);
+        const randomMessage = hotMessages[Math.floor(Math.random() * hotMessages.length)];
+        await message.reply(randomMessage);
+        
+        const sentMsg = await message.reply({
+          body: "💦 𝗘𝗡𝗝𝗢𝗬 𝗧𝗛𝗜𝗦 𝗛𝗢𝗧 𝗖𝗟𝗜𝗣! 𝗗𝗢𝗡'𝗧 𝗙𝗢𝗥𝗚𝗘𝗧 𝗧𝗢 𝗦𝗔𝗬 𝗧𝗛𝗔𝗡𝗞 𝗕𝗔𝗗𝗛𝗢𝗡! 😘",
+          attachment: fs.createReadStream(tempFilePath)
+        });
+        
+        api.setMessageReaction("🥵", sentMsg.messageID, () => {}, true);
+
+        fs.unlink(tempFilePath, (err) => {
+          if (err) console.error("Error deleting temp file:", err);
+        });
+      } catch (fallbackError) {
+        console.error("Fallback error:", fallbackError);
+        message.reply("😿 Oops! Something went wrong. Please try again later.");
+      }
+    }
+  }
+};
