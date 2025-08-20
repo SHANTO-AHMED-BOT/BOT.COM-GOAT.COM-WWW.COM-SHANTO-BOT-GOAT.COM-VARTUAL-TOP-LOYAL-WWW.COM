@@ -89,11 +89,14 @@ module.exports = {
 ├‣ 𝙽𝚒𝚌𝚔𝙽𝚊𝚖𝚎: ${userInfo[uid].alternateName || "𝙽𝚘𝚗𝚎"}
 ╰‣ 𝙵𝚛𝚒𝚎𝚗𝚍 𝚠𝚒𝚝𝚑 𝚋𝚘𝚝: ${userInfo[uid].isFriend ? "𝚈𝚎𝚜✅" : "𝙽𝚘❎"}
 
-╭─────[ 𝐔𝐒𝐄𝐑 𝐒𝐓𝐀𝐓𝐒 ]
-├‣ 𝙼𝚘𝚗𝚎𝚢: $${formatMoney(money)}
+╞═════𖠁[ 𝐔𝐒𝐄𝐑 𝐒𝐓𝐀𝐓𝐒 ]𖠁═════╡\n
+╔══════✮❁•°♛°•❁✮ ═════╗
+
+ 𝙼𝚘𝚗𝚎𝚢: $${formatMoney(money)}
 ├‣ 𝚁𝚊𝚗𝚔: #${rank}/${allUser.length}
 ├‣ 𝙼𝚘𝚗𝚎𝚢 𝚁𝚊𝚗𝚔: #${moneyRank}/${allUser.length}
-╰‣ 𝙱𝚊𝚋𝚢 𝚝𝚎𝚊𝚌𝚑: ${babyTeach || 0}`;
+╰▻𝙱𝚊𝚋𝚢 𝚝𝚎𝚊𝚌𝚑: ${babyTeach || 0}\n ╚══════✮❁•°❀°•❁✮══════╝
+`;
 
     message.reply({
       body: userInformation,
@@ -107,4 +110,4 @@ function formatMoney(num) {
   let unit = 0;
   while (num >= 1000 && ++unit < units.length) num /= 1000;
   return num.toFixed(1).replace(/\.0$/, "") + units[unit];
-}
+                   }
