@@ -9,9 +9,10 @@ const baseApiUrl = async () => {
 
 (module.exports = {
   config: {
-    name: "lyrics",
+    name: "lyric",
     version: "1.0",
     author: "BADHON",
+    aliases: ["l", "lyricvideo", "lyrics"]
     countDown: 5,
     role: 0,
     description: {
