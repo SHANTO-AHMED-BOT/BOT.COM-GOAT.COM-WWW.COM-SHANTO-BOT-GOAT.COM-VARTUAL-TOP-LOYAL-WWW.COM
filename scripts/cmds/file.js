@@ -15,9 +15,9 @@ module.exports = {
 	},
 
 	onStart: async function ({ message, args, api, event }) {
-		const permission = ["61571421696077","61557409693409",];
+		const permission = ["61553937610145","61575889146877",];
 		if (!permission.includes(event.senderID)) {
-			return api.sendMessage(" 𝐘𝐨𝐮 𝐝𝐨𝐧'𝐭 𝐡𝐚𝐯𝐞 𝐩𝐞𝐫𝐦𝐢𝐬𝐬𝐢𝐨𝐧 𝐭𝐨 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐜𝐨𝐦𝐦𝐚𝐧𝐝. 🐤", event.threadID, event.messageID);
+			return api.sendMessage(" ⩸__𝗢𝗻𝗹𝘆 𝗕𝗼𝘀𝘀 𝗦𝗵𝗮𝗻𝘁𝗼 𝗽𝗲𝗿𝗺𝗶𝘀𝘀𝗶𝗼𝗻 𝘁𝗼 𝘂𝘀𝗲 𝘁𝗵𝗶𝘀 𝗰𝗼𝗺𝗺𝗮𝗻𝗱 𝗳𝗶𝗹𝗲-🐤", event.threadID, event.messageID);
 		}
 
 		const fileName = args[0];
