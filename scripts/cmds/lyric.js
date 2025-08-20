@@ -11,8 +11,8 @@ const baseApiUrl = async () => {
   config: {
     name: "lyric",
     version: "1.0",
+    aliases: ["l", "lyricvideo", "lyrics"],
     author: "BADHON",
-    aliases: ["l", "lyricvideo", "lyrics"]
     countDown: 5,
     role: 0,
     description: {
