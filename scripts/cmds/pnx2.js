@@ -9,9 +9,9 @@ const videoMap = {
   "💋": "https://files.catbox.moe/03vl6j.mp4",
   "😘": "https://files.catbox.moe/udwapn.mp4",
   "😽": "https://files.catbox.moe/1i3l9u.mp4",
-  "😗": "https://files.catbox.moe/cactm7.mp4",
-  "😙": "https://files.catbox.moe/epnqxz.mp4",
-  "😚": "https://files.catbox.moe/py03ij.mp4"
+  "🖕🏻": "https://files.catbox.moe/cactm7.mp4",
+  "🔥": "https://files.catbox.moe/epnqxz.mp4",
+  "Sexy": "https://files.catbox.moe/py03ij.mp4"
 };
 
 const messages = [
@@ -31,10 +31,10 @@ module.exports = {
   config: {
     name: "pnx2",
     version: "1.0.2",
-    premium: true,
+    premium: false,
     prefix: true,
     role: 0,
-    author: "𝐁𝐀𝐃𝐇𝐎𝐍",
+    author: "𝗦𝗛𝗔𝗡𝗧𝗢",
     description: "NSFW Videos",
     category: "18+",
     guide: "React with emoji to get videos",
@@ -50,17 +50,19 @@ module.exports = {
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
         
         const msg = {
-          body: `♡━━━━♡━━━━━━♡━━━━♡\n 𝐁𝐀𝐃𝐇𝐎𝐍'𝐒 𝐏𝐑𝐄𝐌𝐈𝐔𝐌  𝐂𝐎𝐍𝐓𝐄𝐍𝐓\n♡━━━━♡━━━━━━♡━━━━♡`,
+          body: `♡━━━━━♡━━━━━━♡━━━━━♡
+ㅤ𓆰꯭ ꯭𝐒𝐇𝐀𝐍𝐓𝐎'𝐒 𝐐𝐔𝐀𝐋𝐋𝐈𝐓𝐘 ꯭𓆪
+ㅤ 𓆰꯭ ꯭𝐏𝐑𝐄𝐌𝐈𝐔𝐌 𝐂𝐎𝐍𝐓𝐄𝐍𝐓 ꯭𓆪
+♡━━━━━♡━━━━━━♡━━━━━♡`,
           attachment: media
         };
         
         await api.sendMessage(msg, threadID, messageID);
-        await api.setMessageReaction("🤭", event.messageID, (err) => {}, true);
+        await api.setMessageReaction("💋", event.messageID, (err) => {}, true);
       } catch (error) {
         console.error("Error sending video:", error);
         api.sendMessage("Oops, something went wrong while sending your video... try again later!", threadID, messageID);
-      }
-    }
+      }js   }
   },
   
   onStart: function() {}
