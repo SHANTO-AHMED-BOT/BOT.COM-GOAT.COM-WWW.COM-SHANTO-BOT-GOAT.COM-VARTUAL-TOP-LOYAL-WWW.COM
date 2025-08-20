@@ -5,7 +5,7 @@ module.exports = {
   config: Object.freeze({
     name: "help",
     version: "1.20",
-    author: "✦ 𝗕𝗔𝗗𝗛𝗢𝗡 𝗥𝗢𝗛𝗠𝗔𝗡 ✦",
+    author: "𝐒𝐇𝐀𝐍𝐓𝐎 𝐀𝐇𝐌𝐄𝐃",
     countDown: 5,
     role: 0,
     shortDescription: { en: "📖 View command usage" },
@@ -21,25 +21,25 @@ module.exports = {
 
     if (args.length === 0) {
       const categories = {};
-      let msg = `╭━━━  -ღ´🦋𝗠𝗲𝗹𝗶𝘀𝗮🍒🥂  ━━━╮\n` +
+      let msg = `╭━━━ -ღ´🩵𝐒𝐇𝐀𝐍𝐓𝐎🖤🪽  ━━━╮\n` +
                 `┃ 🔰 Total Commands: ${commands.size}\n` +
                 `┃ 📥 Use: ${prefix}help [command]\n` +
                 `╰━━━━━━━━━━━━━━━━━━━━━━╯\n\n`;
 
       for (const [name, value] of commands) {
         if (value.config.role > role) continue;
-        const category = value.config.category || "📂 Uncategorized";
+        const category = value.config.category || "📩 Uncategorized";
         if (!categories[category]) categories[category] = [];
         categories[category].push(name);
       }
 
       for (const category of Object.keys(categories)) {
-        msg += `🗂️ 𝗖𝗔𝗧𝗘𝗚𝗢𝗥𝗬: ${category.toUpperCase()}\n`;
-        msg += `━━━━━━━━━━━━━━━━━━\n`;
+        msg += `🗃️ 𝗖𝗔𝗧𝗘𝗚𝗢𝗥𝗬: ${category.toUpperCase()}\n`;
+        msg += `➪▭▭▭▭▭▭▭▭▭✰┑\n`;
         categories[category].sort().forEach((cmd) => {
-          msg += `🔹 ${cmd}\n`;
+          msg += `🔸 ${cmd}\n`;
         });
-        msg += `━━━━━━━━━━━━━━━━━━━\n\n`;
+        msg += `➪▭▭▭▭▭▭▭▭▭▭▭✰\n\n`;
       }
 
       msg += `💡 Tip: Type '${prefix}help [command]' for detailed info.\n`;
@@ -61,16 +61,16 @@ module.exports = {
       const usage = guideBody.replace(/{pn}/g, prefix).replace(/{n}/g, configCommand.name);
       const aliasList = aliases.get(configCommand.name) || [];
 
-      const response = `╭────「 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐇𝐄𝐋𝐏 」────⦿\n` +
-                       `┃ ✦ Name: ${configCommand.name}\n` +
-                       `┃ ✦ Description: ${longDescription}\n` +
-                       `┃ ✦ Aliases: ${aliasList.length ? aliasList.join(", ") : "None"}\n` +
-                       `┃ ✦ Version: ${configCommand.version || "1.0"}\n` +
-                       `┃ ✦ Role Required: ${roleText}\n` +
-                       `┃ ✦ Cooldown: ${configCommand.countDown || 1}s\n` +
-                       `┃ ✦ author: ${author}\n` +
-                       `┃ ✦ Usage:\n┃    ${usage}\n` +
-                       `╰─────「 𝗠𝗘𝗟𝗜𝗦𝗔 𝗕𝗕'𝗘 」──────⦿`;
+      const response = `╭━━━「 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐇𝐄𝐋𝐏 」━━━⦿\n` +
+                       `┃ ➪ Name: ${configCommand.name}\n` +
+                       `┃ ➪ Description: ${longDescription}\n` +
+                       `┃ ➪ Aliases: ${aliasList.length ? aliasList.join(", ") : "None"}\n` +
+                       `┃ ➪ Version: ${configCommand.version || "1.0"}\n` +
+                       `┃ ➪ Role Required: ${roleText}\n` +
+                       `┃ ➪ Cooldown: ${configCommand.countDown || 1}s\n` +
+                       `┃ ➪ author: ${author}\n` +
+                       `┃ ➪ Usage:\n┃    ${usage}\n` +
+                       `╰━━━━「 𝐒𝐀𝐍𝐓𝐎'𝐒 𝐁𝐀𝐁𝐘 」━━━━━⦿`;
 
       await message.reply(response);
     }
@@ -84,4 +84,4 @@ function roleTextToString(role) {
     case 2: return "🤖 Bot Admins";
     default: return "❓ Unknown Role";
   }
-      }
+}
